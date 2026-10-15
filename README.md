@@ -1,32 +1,18 @@
-# How to modify the keymap
+# ZitaoTech Sofle · Personal Layout
 
-**0. Register a github account if you don't have one.**  
-**1. Fork this repo.**  
-**2. Open up `config/zitaotech_sofle.keymap` and edit the keymap to your liking.**  
-**3. After editing the keymap, choose commit changes.**  
-**and then check the Github Actions section.**  
-**Your new firmware file should be available for download.**  
-**5. Unzip the firmware.zip file. You should see one files: `lpm_view;left_bbtrackball-zitaotech_sofle_left-zmk.uf2`.**  
-**6. Flash the left keyboard with your new firmware if you just need to change the keymap.**  
+ZMK v0.3.0 configuration for a left A320 touchpad and right TrackPoint.
 
-```Option2```  
-**0. Register a github account if you don't have one.**  
-**1. Fork this repo.**  
-**2. Access the [keymap editor web](https://nickcoutsos.github.io/keymap-editor/)**  
-**3. Login with your Github Account on the web**  
-**4. Choose the right repository and you can edit the keymap more intuitivly**  
-**5. After editting the keymap there will be another github action compiling and you will have the firmware.zip file**  
-**6. Flash the keyboard with your new firmware.**  
+Edit **`config/zitaotech_sofle.keymap`**. The board's fallback keymap remains the vendor default.
 
-**More Info about the web app please access this [github page](https://github.com/nickcoutsos/keymap-editor)**  
+Generated diagrams are published to the [`draw` branch](../../tree/draw), separately from firmware source history.
 
+## Build and flash
 
- <p align="center">
-<img width="800"  src="https://github.com/DZT970525/zmk_config_zitaotech_sofle/blob/main/firmwareV2.0/sofle_keyboard.png"/>
-</p>
+Push changes or run **Build ZMK firmware** in GitHub Actions. After a successful build, download its `firmware` artifact and flash both halves:
 
-# Keymap for FirmwareV2.0
+- Left: `lpm_view;left_bbtrackpad-zitaotech_sofle_left-zmk.uf2`
+- Right: `lpm_view;right_trackpoint-zitaotech_sofle_right-zmk.uf2`
 
-<p align="center">
-<img width="800"  src="https://github.com/DZT970525/zmk_config_zitaotech_sofle/blob/main/firmwareV2.0/zitaotech_sofle_keymap_firmwareV2.0.png"/>
-</p>
+Do not use the alternative trackball, `settings_reset`, or `left-touchpad-fpd-diagnostics` images for normal updates. The opt-in diagnostic image logs only A320 sensor registers over USB and is intended for contact-detection experiments. Backlight and sensitivity settings are saved after a 1-second delay; wait at least 2 seconds before rebooting to test persistence.
+
+Before regular use, verify both pointing devices, stationary touch/release detection, layer controls, fast movement and encoder rotation, BLE pairing indication, backlight modes and restart persistence. A320 shutter-based contact estimation is experimental; thresholds across fingers, pressure and lighting, and battery impact require measurement. Firmware build and hardware checks are required; source inspection alone is not validation.

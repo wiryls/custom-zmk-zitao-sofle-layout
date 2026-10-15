@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: MIT
+
+description: Adjust each half's independent pointer sensitivity level
+
+compatible: "zitaotech,behavior-pointing-sensitivity"
+
+include: one_param.yaml

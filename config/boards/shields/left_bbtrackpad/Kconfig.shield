@@ -4,118 +4,57 @@
 config SHIELD_LEFT_BBTRACKPAD
     def_bool $(shields_list_contains,left_bbtrackpad)
 
-menu "A320 Trackpad Setting"
+if SHIELD_LEFT_BBTRACKPAD
 
-config A320_TRACKPAD_SCROLL_INTERVAL
-    int "Trackpad scroll in miliseconds"
-    default 50
-    range 0 200
-    help
-      The bigger this value, the slower the trackpad scrolls
+menu "A320 touchpad"
 
 config A320_LOG_LEVEL
-	int "Log Level for Touch"
-	default 4
-
-config A320
-	bool "A320 Driver"
-	depends on I2C && GPIO
-	help
-	  Projected capacitive trackpad/touchscreen controller.
+    int "Driver log level"
+    range 0 4
+    default 4
 
 config INPUT_A320_INIT_PRIORITY
-  int "A320 Initialization Priority"
-  default 90
-
-endmenu
-
-
-menu "A320 Advanced Settings"
-
-config A320_EXPONENTIAL
-    bool "Enable A320 exponential acceleration"
-    default y
-    help
-      Enable exponential acceleration for A320 movement,
-      similar to trackball behavior.
-
-config A320_TOGGLE_KEY_POSITION
-    int "Key position to toggle mouse/scroll mode"
-    default 62
-    help
-      ZMK position code of the key used to toggle between mouse and scroll mode.
-
-config A320_START_IN_SCROLL_MODE
-    bool "Start in scroll mode by default"
-    default y
-    help
-      If yes (y), the default state is scroll mode, and holding the toggle key switches to mouse mode.
-      If no (n), the default state is mouse mode, and holding the toggle key switches to scroll mode.
-
-config A320_SCROLL_X_DIR
-    int "Scroll X direction multiplier (1 for normal, -1 for inverted)"
-    default 1
-
-config A320_SCROLL_Y_DIR
-    int "Scroll Y direction multiplier (1 for normal, -1 for inverted)"
-    default 1
-
-config A320_SCROLL_DEADZONE
-    int "Scroll deadzone"
-    default 1
-    help
-      Deadzone to filter out slight hand tremors.
-
-config A320_SCROLL_INPUT_MAX
-    int "Scroll input max"
-    default 64
-
-config A320_SCROLL_DIVISOR_SLOW
-    int "Scroll divisor slow (Fine-grained control)"
-    default 60
-
-config A320_SCROLL_DIVISOR_FAST
-    int "Scroll divisor fast (Max speed limit)"
-    default 8
-
-config A320_DOMINANT_NUMERATOR
-    int "Dominant axis numerator for accidental touch prevention"
-    default 3
-
-config A320_DOMINANT_DENOMINATOR
-    int "Dominant axis denominator for accidental touch prevention"
-    default 2
-
-config A320_MOUSE_BASE_SPEED_PERCENT
-    int "Mouse base speed (Percentage, 50 = 0.5)"
-    default 150
+    int "Driver initialization priority"
+    default 90
 
 config A320_MOUSE_SENS_BASE_PERCENT
-    int "Mouse sensitivity base (Percentage, 40 = 0.3)"
+    int "Pointer sensitivity base (percent)"
     default 40
 
 config A320_MOUSE_SENS_STEP_PERCENT
-    int "Mouse sensitivity step per LED brightness (Percentage, 1 = 0.01)"
+    int "Pointer sensitivity gain per level (percent)"
     default 1
 
-config CUSTOM_LED_BRT_UP_POS
-    int "Custom LED Brightness UP key position"
-    default 49
-
-config CUSTOM_LED_BRT_DOWN_POS
-    int "Custom LED Brightness DOWN key position"
-    default 50
-
-config CUSTOM_LED_BRT_DEFAULT
-    int "Custom LED Default Brightness (10-255)"
-    default 128
+config A320_FINGER_PRESENCE
+    bool "Report experimental A320 optical contact estimate"
+    default y if !SHIELD_SETTINGS_RESET
     help
-      Default brightness level of the Dongle LED on boot.
+      Experimental: poll shutter exposure every 100 ms; actual sensor motion
+      can advance the next optical sample, but never closer than 20 ms.
+      Exposure below 350 estimates contact, above 450 estimates release; the
+      dead band keeps the reported state. Contact reports on the first
+      qualifying sample. Release waits 500 ms from the first qualifying
+      departure and then up to one polling period, so accelerated reads cannot
+      shorten the layer grace period. Sensor wake time can add latency. Motion
+      does not determine contact. Thresholds and battery impact require testing.
 
-config CUSTOM_LED_BRT_STEP
-    int "Custom LED Brightness Adjustment Step"
-    default 25
+config A320_FPD_DIAGNOSTICS
+    bool "Log A320 contact diagnostic registers"
+    depends on A320_FINGER_PRESENCE && ZMK_USB_LOGGING
+    default n
     help
-      The amount of brightness added or subtracted per key press.
+      Temporary opt-in diagnostics: log raw status, optics, sensor mode,
+      and FPD configuration at most twice per second. No key contents.
+      Adds read traffic; disable after diagnosis. Keep ZMK logging minimal
+      so unrelated keyboard debug messages are not collected.
+
+config TOUCHPAD_PAIRING_LAMP_BRIGHTNESS
+    int "New-pairing breathing peak brightness (percent)"
+    range 1 100
+    default 20
+    help
+      Independent of keyboard backlight and pointer sensitivity.
 
 endmenu
+
+endif # SHIELD_LEFT_BBTRACKPAD

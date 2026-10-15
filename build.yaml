@@ -6,6 +6,12 @@ include:
   - board: zitaotech_sofle_left
     shield: lpm_view;left_bbtrackpad
 
+  - board: zitaotech_sofle_left
+    shield: lpm_view;left_bbtrackpad
+    snippet: zmk-usb-logging
+    cmake-args: -DCONFIG_A320_FPD_DIAGNOSTICS=y -DCONFIG_A320_LOG_LEVEL=3 -DCONFIG_ZMK_LOGGING_MINIMAL=y -DCONFIG_ZMK_LOG_LEVEL_OFF=y -DCONFIG_LOG_DEFAULT_LEVEL=0 -DCONFIG_SENSOR_LOG_LEVEL_OFF=y -DCONFIG_LOG_BACKEND_UART=y
+    artifact-name: left-touchpad-fpd-diagnostics
+
 
     
   - board: zitaotech_sofle_right

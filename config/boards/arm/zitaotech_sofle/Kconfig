@@ -6,3 +6,28 @@ config BOARD_ZITAOTECH_SOFLE_LEFT
 
 config BOARD_ZITAOTECH_SOFLE_RIGHT
     bool
+
+menu "Sofle pointer sensitivity"
+
+config SOFLE_TOUCHPAD_SENSITIVITY_DEFAULT
+    int "Touchpad default sensitivity level"
+    range 10 100
+    default 100
+    help
+      Independent firmware sensitivity level. 100 preserves the legacy
+      touchpad USB startup gain. This is not a hardware DPI value.
+
+config SOFLE_TRACKPOINT_SENSITIVITY_DEFAULT
+    int "TrackPoint default sensitivity level"
+    range 10 100
+    default 40
+    help
+      Independent firmware sensitivity level. 40 preserves the legacy
+      TrackPoint gain at the factory backlight default.
+
+config SOFLE_POINTER_SENSITIVITY_STEP
+    int "Sensitivity level change per key press"
+    range 1 90
+    default 10
+
+endmenu

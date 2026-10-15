@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: MIT
+
+description: Control real Sofle PWM keyboard backlight independently of other lights
+
+compatible: "zitaotech,behavior-keyboard-backlight"
+
+include: one_param.yaml

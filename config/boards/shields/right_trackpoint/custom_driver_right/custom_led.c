@@ -13,8 +13,6 @@
 
 #include <zmk/backlight.h>
 
-#include "custom_led.h" // ★ 新增
-
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 BUILD_ASSERT(DT_HAS_CHOSEN(zmk_custom_led),
@@ -41,9 +39,6 @@ static uint8_t last_brt = 255;
 static uint8_t current_brt = 0;
 static uint8_t target_brt = 0;
 static int fade_step = -1;
-
-/* ★ 对外状态：最近一次有效亮度 */
-static uint8_t last_valid_brt = BRT_MIN;
 
 /* === Immediate apply LED === */
 static void apply_led(uint8_t brightness) {
@@ -98,11 +93,6 @@ static void poll_handler(struct k_work *work) {
 
         uint8_t led_level = (brt == 0) ? 0 : MAX(BRT_MIN, brt);
 
-        if (led_level > 0) {
-            /* ★ 只在有效亮度时更新 */
-            last_valid_brt = led_level;
-        }
-
         if (led_level == 0) {
             k_work_cancel_delayable(&auto_off_work);
             k_work_reschedule(&auto_off_work, K_MSEC(OFF_DELAY_MS));
@@ -122,9 +112,6 @@ static void poll_handler(struct k_work *work) {
     k_work_reschedule(&poll_work, K_MSEC(10));
 }
 
-/* === Public API === */
-uint8_t custom_led_get_last_valid_brightness(void) { return last_valid_brt; }
-
 /* === Init === */
 static int init_led_follow(void) {
     if (!device_is_ready(led_dev))
@@ -136,10 +123,6 @@ static int init_led_follow(void) {
 
     uint8_t boot = zmk_backlight_get_brt();
     uint8_t led_level = (boot == 0) ? 0 : MAX(BRT_MIN, boot);
-
-    if (led_level > 0) {
-        last_valid_brt = led_level; // ★ 初始化
-    }
 
     apply_led(led_level);
 

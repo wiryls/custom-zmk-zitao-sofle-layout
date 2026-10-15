@@ -1,19 +1,89 @@
-# .github/workflows/draw.yml
 name: Draw Keymap
+
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - "config/**"
       - .github/workflows/draw.yml
       - keymap_drawer.config.yaml
 
+concurrency:
+  group: keymap-draw-main
+  cancel-in-progress: true
+
 jobs:
   draw:
+    if: github.ref == 'refs/heads/main'
     uses: caksoylar/keymap-drawer/.github/workflows/draw-zmk.yml@main
     permissions:
-      contents: write
+      contents: read
     with:
-      commit_message: "[Draw] ${{ github.event.head_commit.message }}"
-      destination: "commit"
-      fail_on_error: ${{ fromJSON(true) }}
+      destination: "artifact"
+      fail_on_error: true
+
+  publish:
+    needs: draw
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: source
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: drawings
+          path: drawings
+
+      - name: Publish drawings to draw branch
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          source="$GITHUB_WORKSPACE/source"
+          drawings="$GITHUB_WORKSPACE/drawings"
+          publish="$RUNNER_TEMP/draw-publish"
+          for file in zitaotech_sofle.svg zitaotech_sofle.yaml; do
+            test -s "$drawings/$file"
+          done
+
+          # Ignore an outdated run rather than replacing a newer drawing.
+          current=$(git -C "$source" ls-remote origin refs/heads/main | cut -f1)
+          if [ "$current" != "$SOURCE_SHA" ]; then
+            echo "Source is no longer main; skipping publication."
+            exit 0
+          fi
+
+          git init --initial-branch=draw "$publish"
+          git -C "$publish" remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          # Reuse checkout's local authentication without embedding it in a URL or file.
+          while read -r key value; do
+            git -C "$publish" config --local "$key" "$value"
+          done < <(git -C "$source" config --local --get-regexp '^http\..*\.extraheader$')
+
+          if git -C "$publish" ls-remote --exit-code origin refs/heads/draw >/dev/null; then
+            git -C "$publish" fetch --depth=1 origin refs/heads/draw
+            git -C "$publish" checkout -B draw FETCH_HEAD
+          fi
+          # Only this generated directory is replaced; no main source is copied.
+          git -C "$publish" rm -r --ignore-unmatch -- keymap-drawer
+          mkdir -p "$publish/keymap-drawer"
+          cp "$drawings/zitaotech_sofle.svg" "$drawings/zitaotech_sofle.yaml" "$publish/keymap-drawer/"
+          printf '# Keymap drawings\n\nSource: [%s](%s/%s/commit/%s)\n\n![Keymap](keymap-drawer/zitaotech_sofle.svg)\n' \
+            "$SOURCE_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$SOURCE_SHA" > "$publish/README.md"
+
+          git -C "$publish" config user.name 'github-actions[bot]'
+          git -C "$publish" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$publish" add -- README.md keymap-drawer
+          if git -C "$publish" diff --cached --quiet; then
+            echo "Drawings are unchanged."
+            exit 0
+          fi
+          git -C "$publish" commit -m "draw: update keymap for $SOURCE_SHA"
+          git -C "$publish" push origin HEAD:refs/heads/draw

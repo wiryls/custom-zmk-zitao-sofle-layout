@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: MIT
+description: Send one immediate vertical or horizontal mouse wheel increment
+compatible: "zitaotech,behavior-scroll-step"
+include: one_param.yaml

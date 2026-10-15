@@ -183,12 +183,8 @@
 
 &trackpoint_listener {
     status = "okay";
-    input-processors =
-        <&zip_temp_layer 3 600>,
-        <&ip_behaviors0>,
-        <&ip_behaviors1>,
-        <&ip_behaviors2>,
-        <&ip_behaviors3>;
+    /* Pointer input activates MOUSE; keymap bindings define its actions. */
+    input-processors = <&zip_temp_layer 3 600>;
 };
 
 &bbtrackpad_listener {
