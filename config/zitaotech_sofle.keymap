@@ -122,61 +122,82 @@
         };
     };
 
+
+
+    behaviors {
+        rgb_eff_encoder: rgb_effect_encoder {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&rgb_ug RGB_EFF>, <&rgb_ug RGB_EFR>;
+        };
+    };
+
+    behaviors {
+        rgb_bri_encoder: rgb_brightness_encoder {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&rgb_ug RGB_BRI>, <&rgb_ug RGB_BRD>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
-         default_layer {
-            display-name = "QWERTY";
-           bindings = <
-&kp ESC   &kp N1   &kp N2     &kp N3   &kp N4    &kp N5    &kp C_MUTE                   &kp C_MUTE                     &kp N6      &kp N7      &kp N8    &kp N9    &kp N0   &kp BSPC            
-&kp TAB   &kp Q    &kp W      &kp E    &kp R     &kp T                                                                 &kp Y       &kp U       &kp I     &kp O     &kp P    &kp BSLH
-&kp CAPS  &kp A    &kp S      &kp D    &kp F     &kp G     &mkp LCLK                    &mkp LCLK                      &kp H       &kp J       &kp K     &kp L     &kp SEMI &kp ENTER
-&kp LSHFT &kp Z    &kp X      &kp C    &kp V     &kp B     &kp PG_DN  &kp PG_UP         &msc SCRL_DOWN  &msc SCRL_UP   &kp N       &kp M       &kp COMMA &kp DOT   &kp FSLH &kp RSHIFT
-                   &kp LCTRL  &kp LGUI &kp LALT  &kp SPACE &mo 1                                        &mo 1          &kp SPACE   &kp MINUS   &kp EQUAL    &kp GRAVE
-           >;
-           sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp LEFT RIGHT>;
+        default_layer {
+            display-name = "MAIN";
+            bindings = <
+&kp GRAVE &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp C_MUTE &mkp RCLK &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp BACKSPACE 
+&kp TAB &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &kp BSLH 
+&lt 1 LG(SPACE) &kp A &kp S &kp D &kp F &kp G &mkp LCLK &mkp LCLK &kp H &kp J &kp K &kp L &kp SEMI &kp SQT 
+&kp LSHFT &kp Z &kp X &kp C &kp V &kp B &kp PG_DN &kp PG_UP &msc SCRL_DOWN &msc SCRL_UP &kp N &kp M &kp UP_ARROW &kp COMMA &kp PERIOD &kp SLASH 
+&kp LEFT_ALT &kp LEFT_GUI &kp LCTRL &kp SPACE &kp MINUS &kp EQUAL &kp ENTER &kp LEFT_ARROW &kp DOWN_ARROW &kp RIGHT_ARROW 
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp LEFT RIGHT>;
         };
 
-
         lower_layer {
-            display-name = "LOWER";
+            display-name = "FUNC";
             bindings = <
-&kp ESC     &kp F1    &kp F2     &kp F3    &kp F4    &kp F5           &bt BT_CLR                   &kp C_MUTE             &kp F6    &kp F7   &kp F8     &kp F9    &kp F10    &kp DEL         
-&kp TAB     &trans    &kp UP     &trans    &trans    &out OUT_TOG                                                         &kp F11   &kp F12  &trans     &trans    &kp HOME   &kp BSLH
-&kp CAPS    &kp LEFT  &kp DOWN   &kp RIGHT &trans    &trans           &mkp RCLK                    &mkp RCLK              &trans    &trans   &trans     &trans    &kp SQT    &kp ENTER
-&kp LSHFT   &trans    &trans     &trans    &trans    &rgb_ug RGB_TOG  &trans     &trans            &bl BL_DEC  &bl BL_INC &trans    &trans   &kp LBKT   &kp RBKT  &kp UNDER  &kp PLUS
-                      &BOT       &kp LGUI  &kp LALT  &kp SPACE        &mo 1                                     &mo 1     &kp SPACE &trans   &kp DOT    &BOT 
+&kp ESCAPE &kp F1 &kp F2 &kp F3 &kp F4 &kp F5 &bt BT_CLR &kp C_MUTE &kp F6 &kp F7 &kp F8 &kp F9 &kp F10 &kp DELETE 
+&mo 2 &kp F11 &kp F12 &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+&trans &trans &trans &kp LEFT_BRACE &kp LEFT_BRACKET &trans &mkp RCLK &mkp RCLK &trans &kp RIGHT_BRACKET &kp RIGHT_BRACE &trans &trans &trans 
+&trans &trans &trans &trans &trans &trans &trans &trans &bl BL_DEC &bl BL_INC &trans &trans &kp PAGE_UP &trans &trans &kp INSERT 
+&trans &trans &trans &trans &kp LS(MINUS) &kp LS(EQUAL) &trans &kp HOME &kp PAGE_DOWN &kp END 
             >;
             sensor-bindings = <&BLE_encoder &inc_dec_kp UP DOWN>;
         };
+
         raise_layer {
-            display-name = "RAISE";
+            display-name = "CONF";
             bindings = <
-&kp ESC     &kp F1    &kp F2     &kp F3    &kp F4    &kp F5           &bt BT_CLR                      &kp C_MUTE       &kp F6     &kp F7    &kp F8    &kp F9    &kp F10    &kp BSPC            
-&kp TAB     &trans    &kp UP     &trans    &trans    &out OUT_TOG                                                      &trans     &trans    &trans    &trans    &trans     &trans
-&kp CAPS    &kp LEFT  &kp DOWN   &kp RIGHT &trans    &trans           &mkp RCLK                       &none            &trans     &trans    &trans    &trans    &trans     &trans
-&kp LSHFT   &trans    &trans     &trans    &trans    &rgb_ug RGB_TOG  &trans     &trans               &none  &none     &trans     &trans    &trans    &trans    &trans     &trans
-                      &none      &kp LGUI  &kp LALT  &kp SPACE        &mo 1                                  &mo 1     &trans     &trans     &trans     &trans
+&out OUT_TOG &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &none &rgb_ug RGB_TOG &ext_power EP_TOG &none &none &none &none &none &none 
+&none &bt BT_DISC 0 &bt BT_DISC 1 &bt BT_DISC 2 &bt BT_DISC 3 &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &mkp RCLK &none &none &none &none &none &none &none 
+&bt BT_CLR &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none 
+&sys_reset &bootloader &soft_off &none &none &none &none &soft_off &bootloader &sys_reset 
             >;
-        }; 
+            sensor-bindings = <&rgb_eff_encoder &rgb_bri_encoder>;
+        };
+
         MOUSE_layer {
             display-name = "MOUSE";
             bindings = <
-&kp ESC   &kp N1    &kp N2     &kp N3   &kp N4   &kp N5     &bt BT_CLR                       &kp C_MUTE       &kp N6     &kp N7         &kp N8    &kp N9    &kp N0   &kp BSPC              
-&kp TAB   &kp Q     &kp W      &kp E    &kp R    &kp T                                                        &kp Y      &M_kp MB3 U    &kp I     &kp O     &kp P    &kp BSLH
-&kp CAPS  &kp A     &kp S      &kp D    &kp F    &kp G      &mkp LCLK                        &mkp LCLK        &kp H      &M_kp MB1 J    &kp K     &kp L     &kp SEMI &kp ENTER
-&kp LSHFT &kp Z     &kp X      &kp C    &kp V    &kp B      &msc SCRL_DOWN   &msc SCRL_UP    &none  &none     &kp N      &M_kp MB2 M    &kp COMMA &kp DOT   &kp FSLH &kp RSHIFT
-                    &kp LCTRL  &kp LGUI &kp LALT &kp SPACE  &mkp MB1                         &LMouse_sc 0 MB1 &tdRMCLK   &kp MINUS      &kp EQUAL    &kp GRAVE
-           >;
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+&trans &trans &trans &trans &trans &trans &trans &trans &trans &trans 
+            >;
         };
-        RES_layer { 
+
+        RES_layer {
             display-name = "RESERVE";
             bindings = <
-&none     &none     &none      &none    &none    &none   &none                        &none            &none   &none  &none   &none  &none  &none            
-&none     &none     &none      &none    &none    &none                                                 &none   &none  &none   &none  &none  &none
-&none     &none     &none      &none    &none    &none   &none                        &none            &none   &none  &none   &none  &none  &none
-&none     &none     &none      &none    &none    &none   &none   &none                &none  &none     &none   &none  &none   &none  &none  &none
-                    &none      &none    &none    &none   &none                                         &none   &none  &none   &none  &none
+&none &none &none &none &none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none 
             >;
         };
     };
